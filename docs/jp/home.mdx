@@ -1,0 +1,77 @@
+---
+title: "概要"
+description: "エージェントに新しい能力と専門知識を与えるための、シンプルでオープンな形式です。"
+---
+
+import { LogoCarousel } from '/snippets/LogoCarousel.jsx';
+
+Agent Skills は、エージェントがより正確かつ効率的に作業するために発見・利用できる、指示・スクリプト・リソースをまとめたフォルダです。
+
+## なぜ Agent Skills なのか
+
+エージェントの能力は向上していますが、実務を安定して進めるために必要な文脈を常に持っているとは限りません。Skills は、手順化された知識と、会社・チーム・ユーザー固有の文脈を必要なときに読み込める形で提供することで、この問題を解決します。Skills セットにアクセスできるエージェントは、取り組むタスクに応じて能力を拡張できます。
+
+**スキル作成者向け**: 一度作った機能を、複数のエージェント製品で再利用できます。
+
+**スキル対応エージェント向け**: エンドユーザーは初期状態でエージェントに新しい能力を追加できます。
+
+**チーム・企業向け**: 組織知を持ち運び可能でバージョン管理されたパッケージとして蓄積できます。
+
+## Agent Skills でできること
+
+- **ドメイン知識の付与**: 法務レビュー手順からデータ分析パイプラインまで、専門知識を再利用可能な指示としてパッケージ化。
+- **新機能の追加**: 例えば、プレゼン作成、MCP サーバー構築、データセット分析などの能力をエージェントに追加。
+- **再現可能なワークフロー**: 複数ステップの作業を一貫性と監査可能性のあるフローに変換。
+- **相互運用性**: 同じスキルを複数のスキル対応エージェント製品で再利用。
+
+## 採用状況
+
+Agent Skills は主要な AI 開発ツールでサポートされています。
+
+<LogoCarousel />
+
+## オープンな開発
+
+Agent Skills 形式はもともと [Anthropic](https://www.anthropic.com/) によって開発され、オープンスタンダードとして公開されました。現在は多くのエージェント製品に採用されており、エコシステム全体からの貢献を歓迎しています。
+
+[GitHubで見る](https://github.com/agentskills/agentskills)
+
+## はじめに
+
+<CardGroup cols={3}>
+  <Card
+    title="スキルとは？"
+    icon="lightbulb"
+    href="/jp/what-are-skills"
+  >
+    スキルの仕組みと重要性を理解します。
+  </Card>
+  <Card
+    title="仕様"
+    icon="file-code"
+    href="/jp/specification"
+  >
+    SKILL.md 形式の完全仕様を確認します。
+  </Card>
+  <Card
+    title="スキルを統合"
+    icon="gear"
+    href="/jp/integrate-skills"
+  >
+    エージェントやツールにスキル対応を追加します。
+  </Card>
+  <Card
+    title="サンプルスキル"
+    icon="code"
+    href="https://github.com/anthropics/skills"
+  >
+    GitHub のサンプルスキルを確認します。
+  </Card>
+  <Card
+    title="リファレンスライブラリ"
+    icon="wrench"
+    href="https://github.com/agentskills/agentskills/tree/main/skills-ref"
+  >
+    スキルの検証と prompt XML 生成ができます。
+  </Card>
+</CardGroup>

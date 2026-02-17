@@ -15,11 +15,26 @@
     }
   },
   "navigation": {
-    "pages": [
-      "home",
-      "what-are-skills",
-      "specification",
-      "integrate-skills"
+    "languages": [
+      {
+        "language": "en",
+        "default": true,
+        "pages": [
+          "home",
+          "what-are-skills",
+          "specification",
+          "integrate-skills"
+        ]
+      },
+      {
+        "language": "jp",
+        "pages": [
+          "jp/home",
+          "jp/what-are-skills",
+          "jp/specification",
+          "jp/integrate-skills"
+        ]
+      }
     ]
   },
   "contextual": {

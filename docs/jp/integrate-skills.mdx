@@ -1,0 +1,99 @@
+---
+title: "エージェントへのスキル統合"
+sidebarTitle: "スキルを統合"
+description: "エージェントやツールへ Agent Skills 対応を追加する方法。"
+---
+
+このガイドでは、AI エージェントまたは開発ツールへスキル対応を追加する方法を説明します。
+
+## 統合アプローチ
+
+スキル統合には主に次の 2 方式があります。
+
+**Filesystem-based agents** は、bash/unix などのコンピュータ環境で動作し、最も高機能です。モデルが `cat /path/to/my-skill/SKILL.md` のようなシェルコマンドを発行してスキルを有効化し、同梱リソースにもシェル経由でアクセスします。
+
+**Tool-based agents** は、専用のコンピュータ環境なしで動作します。代わりに、モデルがスキル起動や同梱アセット参照を行えるツールを実装します。具体的なツール設計は開発者に委ねられます。
+
+## 概要
+
+スキル対応エージェントには以下が必要です。
+
+1. **Discover**: 設定ディレクトリ内のスキルを検出
+2. **Load metadata**: 起動時に `name` と `description` を読み込み
+3. **Match**: ユーザータスクに適切なスキルを対応付け
+4. **Activate**: 必要時に `SKILL.md` 全文を読み込み
+5. **Execute**: 必要に応じてスクリプト実行とリソースアクセス
+
+## スキル検出
+
+スキルは `SKILL.md` を含むフォルダです。設定済みディレクトリをスキャンして有効なスキルを見つけます。
+
+## メタデータ読み込み
+
+起動時には各 `SKILL.md` の frontmatter のみを解析します。初期コンテキスト消費を抑えるためです。
+
+### Frontmatter の解析
+
+```
+function parseMetadata(skillPath):
+    content = readFile(skillPath + "/SKILL.md")
+    frontmatter = extractYAMLFrontmatter(content)
+
+    return {
+        name: frontmatter.name,
+        description: frontmatter.description,
+        path: skillPath
+    }
+```
+
+### コンテキストへの注入
+
+利用可能なスキルをモデルが認識できるよう、システムプロンプトへメタデータを含めます。
+
+システムプロンプト更新方法はプラットフォームごとの推奨に従ってください。例えば Claude モデルでは XML 形式が推奨されます。
+
+```xml
+<available_skills>
+  <skill>
+    <name>pdf-processing</name>
+    <description>Extracts text and tables from PDF files, fills forms, merges documents.</description>
+    <location>/path/to/skills/pdf-processing/SKILL.md</location>
+  </skill>
+  <skill>
+    <name>data-analysis</name>
+    <description>Analyzes datasets, generates charts, and creates summary reports.</description>
+    <location>/path/to/skills/data-analysis/SKILL.md</location>
+  </skill>
+</available_skills>
+```
+
+Filesystem-based agents では `location` に `SKILL.md` の絶対パスを含めます。Tool-based agents では省略可能です。
+
+メタデータは簡潔に保ってください。1スキルあたりおよそ 50-100 トークン程度が目安です。
+
+## セキュリティ考慮事項
+
+スクリプト実行にはセキュリティリスクがあります。次を検討してください。
+
+- **Sandboxing**: 分離された環境で実行
+- **Allowlisting**: 信頼できるスキルのみ実行
+- **Confirmation**: 危険な操作前にユーザー確認
+- **Logging**: 実行履歴を監査用に記録
+
+## 参照実装
+
+[skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref) は、スキル運用のための Python ユーティリティと CLI を提供します。
+
+例:
+
+**スキルディレクトリを検証**
+```
+skills-ref validate <path>
+```
+
+**エージェントプロンプト向け `<available_skills>` XML を生成**
+```
+skills-ref to-prompt <path>...
+```
+
+実装時はこのライブラリのソースコードも参照できます。
