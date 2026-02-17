@@ -1,0 +1,69 @@
+---
+title: "スキルとは？"
+description: "Agent Skills は、専門知識やワークフローで AI エージェントの能力を拡張するための軽量でオープンな形式です。"
+---
+
+スキルの中核は、`SKILL.md` を含むフォルダです。`SKILL.md` にはメタデータ（最低限 `name` と `description`）と、特定タスクを実行するための手順が記述されます。必要に応じて、スクリプト・テンプレート・参考資料も同梱できます。
+
+```directory
+my-skill/
+├── SKILL.md          # 必須: 指示 + メタデータ
+├── scripts/          # 任意: 実行可能コード
+├── references/       # 任意: 参考ドキュメント
+└── assets/           # 任意: テンプレート・リソース
+```
+
+## スキルの動作
+
+スキルは **progressive disclosure** でコンテキストを効率的に扱います。
+
+1. **Discovery**: 起動時に、各スキルの名前と説明だけを読み込みます。  
+     
+2. **Activation**: タスクがスキル説明に合致したら、`SKILL.md` 全体をコンテキストに読み込みます。  
+     
+3. **Execution**: 指示に従って処理し、必要に応じて参照ファイル読み込みや同梱コード実行を行います。
+
+この流れにより、エージェントの軽さを保ちながら、必要時のみ詳細コンテキストを利用できます。
+
+## SKILL.md ファイル
+
+すべてのスキルは、YAML frontmatter と Markdown 手順を含む `SKILL.md` から始まります。
+
+```mdx
+---
+name: pdf-processing
+description: Extract text and tables from PDF files, fill forms, merge documents.
+---
+
+# PDF Processing
+
+## When to use this skill
+Use this skill when the user needs to work with PDF files...
+
+## How to extract text
+1. Use pdfplumber for text extraction...
+
+## How to fill forms
+...
+```
+
+`SKILL.md` の先頭 frontmatter には、次の項目が必須です。
+
+- `name`: 短い識別子
+- `description`: このスキルをいつ使うか
+
+Markdown 本文には実際の手順を書きます。構造や内容に厳密な制約はありません。
+
+このシンプルな形式には次の利点があります。
+
+- **自己文書化**: 作成者や利用者が `SKILL.md` を読めば内容を把握でき、監査・改善がしやすい。
+- **拡張性**: テキスト手順だけの簡易スキルから、実行コードやテンプレートを含む高度なスキルまで対応。
+- **可搬性**: 単なるファイル群なので、編集・バージョン管理・共有が容易。
+
+## 次のステップ
+
+- [仕様を見る](/jp/specification) で完全な形式を確認。
+- [エージェントへ統合する](/jp/integrate-skills) で対応クライアントを実装。
+- [サンプルスキルを見る](https://github.com/anthropics/skills)。
+- [作成ベストプラクティスを読む](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)。
+- [リファレンスライブラリを使う](https://github.com/agentskills/agentskills/tree/main/skills-ref)。
