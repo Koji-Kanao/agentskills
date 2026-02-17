@@ -19,3 +19,16 @@ Agent Skills is an open format maintained by [Anthropic](https://anthropic.com) 
 ## License
 
 Code in this repository is licensed under [Apache 2.0](LICENSE). Documentation is licensed under [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/). See individual directories for details.
+
+## Netlify Hosting (Mintlify Proxy)
+
+This repository includes `netlify.toml` for hosting the docs via Netlify as a reverse proxy to Mintlify.
+
+1. Edit `netlify.toml` and replace every `https://YOUR_PROJECT.mintlify.app` with your real Mintlify origin.
+2. Connect this repo to Netlify and deploy from the repo root.
+3. Verify:
+   - `/home`
+   - `/jp/home`
+   - language switcher works between English and Japanese
+
+Note: Mintlify documents reverse proxy support as Enterprise-only. If you are not on Enterprise, use Mintlify native hosting/custom domain instead.
