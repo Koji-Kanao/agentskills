@@ -1,0 +1,59 @@
+[build]
+  publish = "docs"
+
+# Mintlify reverse-proxy via Netlify.
+# Replace YOUR_PROJECT with your Mintlify subdomain:
+#   https://YOUR_PROJECT.mintlify.app
+#
+# NOTE:
+# Mintlify's reverse-proxy setup is documented as Enterprise-only.
+# If you're not on an Enterprise plan, use Mintlify's native hosting/custom domain instead.
+
+[[redirects]]
+  from = "/.well-known/vercel/*"
+  to = "https://YOUR_PROJECT.mintlify.app/.well-known/vercel/:splat"
+  status = 200
+  force = true
+  headers = { Origin = "https://YOUR_PROJECT.mintlify.app" }
+
+[[redirects]]
+  from = "/.well-known/skills/*"
+  to = "https://YOUR_PROJECT.mintlify.app/.well-known/skills/:splat"
+  status = 200
+  force = true
+  headers = { Origin = "https://YOUR_PROJECT.mintlify.app" }
+
+[[redirects]]
+  from = "/skill.md"
+  to = "https://YOUR_PROJECT.mintlify.app/skill.md"
+  status = 200
+  force = true
+  headers = { Origin = "https://YOUR_PROJECT.mintlify.app" }
+
+[[redirects]]
+  from = "/mintlify-assets/_next/static/*"
+  to = "https://YOUR_PROJECT.mintlify.app/mintlify-assets/_next/static/:splat"
+  status = 200
+  force = true
+  headers = { Origin = "https://YOUR_PROJECT.mintlify.app" }
+
+[[redirects]]
+  from = "/_mintlify/*"
+  to = "https://YOUR_PROJECT.mintlify.app/_mintlify/:splat"
+  status = 200
+  force = true
+  headers = { Origin = "https://YOUR_PROJECT.mintlify.app" }
+
+[[redirects]]
+  from = "/"
+  to = "https://YOUR_PROJECT.mintlify.app/"
+  status = 200
+  force = true
+  headers = { Origin = "https://YOUR_PROJECT.mintlify.app" }
+
+[[redirects]]
+  from = "/*"
+  to = "https://YOUR_PROJECT.mintlify.app/:splat"
+  status = 200
+  force = true
+  headers = { Origin = "https://YOUR_PROJECT.mintlify.app" }
