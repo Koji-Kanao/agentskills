@@ -22,9 +22,14 @@ Code in this repository is licensed under [Apache 2.0](LICENSE). Documentation i
 
 ## Hosting
 
-Use Mintlify native hosting for this docs site.
+Use Netlify static hosting for this docs site.
 
-After deploying on Mintlify, configure your custom domain in Mintlify settings and verify:
+This repository includes:
+
+- `site/` (publish directory)
+- `netlify.toml` (`publish = \"site\"`)
+
+After deploying on Netlify, verify:
 
 - `/home`
 - `/jp/home`

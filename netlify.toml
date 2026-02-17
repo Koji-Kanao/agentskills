@@ -1,0 +1,12 @@
+[build]
+  publish = "site"
+
+[[redirects]]
+  from = "/"
+  to = "/home"
+  status = 301
+
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
