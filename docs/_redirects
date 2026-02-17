@@ -1,7 +1,0 @@
-/.well-known/vercel/* https://YOUR_PROJECT.mintlify.app/.well-known/vercel/:splat 200!
-/.well-known/skills/* https://YOUR_PROJECT.mintlify.app/.well-known/skills/:splat 200!
-/skill.md https://YOUR_PROJECT.mintlify.app/skill.md 200!
-/mintlify-assets/_next/static/* https://YOUR_PROJECT.mintlify.app/mintlify-assets/_next/static/:splat 200!
-/_mintlify/* https://YOUR_PROJECT.mintlify.app/_mintlify/:splat 200!
-/ https://YOUR_PROJECT.mintlify.app/ 200!
-/* https://YOUR_PROJECT.mintlify.app/:splat 200!
