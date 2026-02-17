@@ -3,7 +3,7 @@
 
 # Mintlify reverse-proxy via Netlify.
 # Replace YOUR_PROJECT with your Mintlify subdomain:
-#   https://YOUR_PROJECT.mintlify.app
+#   https://agent-skills.netlify.app
 #
 # NOTE:
 # Mintlify's reverse-proxy setup is documented as Enterprise-only.
@@ -11,49 +11,49 @@
 
 [[redirects]]
   from = "/.well-known/vercel/*"
-  to = "https://YOUR_PROJECT.mintlify.app/.well-known/vercel/:splat"
+  to = "https://agent-skills.netlify.app/.well-known/vercel/:splat"
   status = 200
   force = true
-  headers = { Origin = "https://YOUR_PROJECT.mintlify.app" }
+  headers = { Origin = "https://agent-skills.netlify.app" }
 
 [[redirects]]
   from = "/.well-known/skills/*"
-  to = "https://YOUR_PROJECT.mintlify.app/.well-known/skills/:splat"
+  to = "https://agent-skills.netlify.app/.well-known/skills/:splat"
   status = 200
   force = true
-  headers = { Origin = "https://YOUR_PROJECT.mintlify.app" }
+  headers = { Origin = "https://agent-skills.netlify.app" }
 
 [[redirects]]
   from = "/skill.md"
-  to = "https://YOUR_PROJECT.mintlify.app/skill.md"
+  to = "https://agent-skills.netlify.app/skill.md"
   status = 200
   force = true
-  headers = { Origin = "https://YOUR_PROJECT.mintlify.app" }
+  headers = { Origin = "https://agent-skills.netlify.app" }
 
 [[redirects]]
   from = "/mintlify-assets/_next/static/*"
-  to = "https://YOUR_PROJECT.mintlify.app/mintlify-assets/_next/static/:splat"
+  to = "https://agent-skills.netlify.app/mintlify-assets/_next/static/:splat"
   status = 200
   force = true
-  headers = { Origin = "https://YOUR_PROJECT.mintlify.app" }
+  headers = { Origin = "https://agent-skills.netlify.app" }
 
 [[redirects]]
   from = "/_mintlify/*"
-  to = "https://YOUR_PROJECT.mintlify.app/_mintlify/:splat"
+  to = "https://agent-skills.netlify.app/_mintlify/:splat"
   status = 200
   force = true
-  headers = { Origin = "https://YOUR_PROJECT.mintlify.app" }
+  headers = { Origin = "https://agent-skills.netlify.app" }
 
 [[redirects]]
   from = "/"
-  to = "https://YOUR_PROJECT.mintlify.app/"
+  to = "https://agent-skills.netlify.app/"
   status = 200
   force = true
-  headers = { Origin = "https://YOUR_PROJECT.mintlify.app" }
+  headers = { Origin = "https://agent-skills.netlify.app" }
 
 [[redirects]]
   from = "/*"
-  to = "https://YOUR_PROJECT.mintlify.app/:splat"
+  to = "https://agent-skills.netlify.app/:splat"
   status = 200
   force = true
-  headers = { Origin = "https://YOUR_PROJECT.mintlify.app" }
+  headers = { Origin = "https://agent-skills.netlify.app" }
