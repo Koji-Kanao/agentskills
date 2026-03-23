@@ -1,0 +1,68 @@
+---
+title: "クイックスタート"
+description: "最初の Agent Skill を作成して、VS Code で動かすまでの最短手順。"
+---
+
+このチュートリアルでは、ランダムでサイコロを振れるスキルを作ります。
+
+## 前提
+
+- [VS Code](https://code.visualstudio.com/)
+- [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
+
+<Note>
+ここでは VS Code を使いますが、Agent Skills はオープン形式です。同じスキルは Claude Code や OpenAI Codex など、対応エージェントでも使えます。
+</Note>
+
+## スキルを作る
+
+スキルは `SKILL.md` を含むフォルダです。VS Code は既定で `.agents/skills/` を見に行くため、プロジェクト内に `.agents/skills/roll-dice/SKILL.md` を作成します。
+
+````markdown .agents/skills/roll-dice/SKILL.md
+---
+name: roll-dice
+description: Roll dice with true randomness. Use when asked to roll a die (d6, d20, etc.), roll dice, or generate a random dice roll.
+---
+
+To roll a die, use the following command that generates a random number from 1
+to the given number of sides:
+
+```bash
+shuf -i 1-<sides> -n 1
+```
+
+```powershell
+Get-Random -Minimum 1 -Maximum (<sides> + 1)
+```
+
+Replace `<sides>` with the number of sides on the die (e.g., 6 for a standard
+die, 20 for a d20).
+````
+
+重要なのは次の 3 点です。
+
+- **`name`**: スキル識別子。通常はフォルダ名と一致させます。
+- **`description`**: エージェントが「いつこのスキルを使うか」を判断するための説明です。
+- **本文**: 実行時に従う手順です。
+
+## 試す
+
+1. プロジェクトを VS Code で開く
+2. Copilot Chat を開く
+3. **Agent** モードを選ぶ
+4. `/skills` を入力し、`roll-dice` が一覧にあることを確認する
+5. **"Roll a d20"** と依頼する
+
+## 裏側で起きていること
+
+1. **Discovery**: セッション開始時に `name` と `description` だけを読む
+2. **Activation**: 依頼内容と説明文を照合し、`SKILL.md` 本文を読む
+3. **Execution**: 本文の手順に従ってコマンドを実行する
+
+この仕組みが [progressive disclosure](/jp/what-are-skills#スキルの動作) です。
+
+## 次のステップ
+
+- [ベストプラクティス](/jp/skill-creation/best-practices)
+- [description の最適化](/jp/skill-creation/optimizing-descriptions)
+- [仕様](/jp/specification)

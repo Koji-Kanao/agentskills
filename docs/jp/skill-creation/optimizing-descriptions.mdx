@@ -1,0 +1,76 @@
+---
+title: "スキル description の最適化"
+sidebarTitle: "description 最適化"
+description: "スキルの description を改善して、関連タスクで安定して発火させる方法。"
+---
+
+スキルは、有効化されなければ役に立ちません。`SKILL.md` の `description` は、エージェントがそのスキルを読むべきか判断する主要シグナルです。
+
+## 良い description の原則
+
+- **命令形で書く**: `Use this skill when...`
+- **実装ではなくユーザー意図を書く**
+- **やや押し気味に書く**
+- **短く保つ**: 1024 文字以内
+
+## 発火テスト用クエリを作る
+
+現実的な user prompt を `should_trigger` 付きで用意します。
+
+```json
+[
+  {
+    "query": "I've got a spreadsheet in ~/data/q4_results.xlsx with revenue in col C and expenses in col D — can you add a profit margin column and highlight anything under 10%?",
+    "should_trigger": true
+  },
+  {
+    "query": "whats the quickest way to convert this json file to yaml",
+    "should_trigger": false
+  }
+]
+```
+
+## 複数回走らせて trigger rate を見る
+
+モデルの挙動は確率的なので、各クエリを 3 回程度実行し、何回発火したかを見ます。
+
+- `should_trigger: true` は 0.5 以上で合格
+- `should_trigger: false` は 0.5 未満で合格
+
+## 過学習を避ける
+
+クエリを train / validation に分けます。
+
+- **train**: 失敗分析と改善に使う
+- **validation**: 一般化しているかの確認だけに使う
+
+## 最適化ループ
+
+1. 現在の description を評価する
+2. 失敗を分類する
+3. description を修正する
+4. 再評価する
+5. validation pass rate が最も高い版を選ぶ
+
+修正時の指針:
+
+- 発火しないなら適用場面の説明を広げる
+- 誤発火するなら境界条件を明示する
+- 失敗クエリの単語を足すだけの修正は避ける
+
+## 反映
+
+最終的に選んだ description を `SKILL.md` に戻し、長さと実運用で再確認します。
+
+```yaml
+# Before
+description: Process CSV files.
+
+# After
+description: >
+  Analyze CSV and tabular data files — compute summary statistics,
+  add derived columns, generate charts, and clean messy data. Use this
+  skill when the user has a CSV, TSV, or Excel file and wants to
+  explore, transform, or visualize the data, even if they don't
+  explicitly mention "CSV" or "analysis."
+```

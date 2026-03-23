@@ -1,0 +1,131 @@
+---
+title: "エージェントへスキル対応を追加する方法"
+sidebarTitle: "スキル対応を追加"
+description: "AI エージェントや開発ツールに Agent Skills 対応を追加するためのガイド。"
+---
+
+このガイドでは、AI エージェントや開発ツールに Agent Skills 対応を追加する流れを説明します。対象は、スキルの検出、モデルへの公開、`SKILL.md` の読み込み、関連リソースの取り扱い、そして会話中のコンテキスト維持までです。
+
+実装の中核は共通ですが、詳細は次の 2 点で変わります。
+
+- **スキルをどこに置くか**: ローカル実行型ならユーザーのファイルシステムを走査できます。クラウド実行やサンドボックス実行では、API、リモートレジストリ、同梱アセットなど別経路が必要です。
+- **モデルがスキル内容へどうアクセスするか**: モデルにファイル読取能力があるなら `SKILL.md` を直接読ませられます。なければ専用ツールか、プロンプトへの注入で提供します。
+
+**前提**: [`Agent Skills 仕様`](/jp/specification) を把握していること。`SKILL.md` の形式、frontmatter、ディレクトリ規約はその仕様で定義されています。
+
+## 基本原則: progressive disclosure
+
+スキル対応エージェントは、通常次の 3 層で情報を読み込みます。
+
+| 層 | 読み込む内容 | タイミング | トークンコスト |
+|---|---|---|---|
+| 1. カタログ | `name` + `description` | セッション開始時 | スキルごとに約 50-100 |
+| 2. 手順 | `SKILL.md` 本文 | スキル有効化時 | 5000 未満推奨 |
+| 3. リソース | scripts / references / assets | 本文から必要になった時 | 可変 |
+
+## Step 1: スキルを検出する
+
+ローカル実行型では、少なくとも次の 2 スコープを考えるのが一般的です。
+
+- **プロジェクト単位**: 作業ディレクトリ配下のスキル
+- **ユーザー単位**: ホームディレクトリ配下の共通スキル
+
+各スコープでは、クライアント固有のディレクトリと `.agents/skills/` の両方を検討します。
+
+| Scope | Path | Purpose |
+|---|---|---|
+| Project | `<project>/.<your-client>/skills/` | クライアント固有の格納先 |
+| Project | `<project>/.agents/skills/` | クライアント間で共有しやすい格納先 |
+| User | `~/.<your-client>/skills/` | クライアント固有の格納先 |
+| User | `~/.agents/skills/` | クライアント間で共有しやすい格納先 |
+
+`.agents/skills/` はクロスクライアント互換の事実上の慣習です。
+
+スキルとして見つけるべきなのは、**`SKILL.md` を含むサブディレクトリ**です。
+
+```text
+~/.agents/skills/
+├── pdf-processing/
+│   ├── SKILL.md
+│   └── scripts/
+│       └── extract.py
+├── data-analysis/
+│   └── SKILL.md
+└── README.md  # スキルではない
+```
+
+実用上のルール:
+
+- `.git/` や `node_modules/` は除外
+- 必要なら `.gitignore` を考慮
+- 深さや件数に上限を設ける
+
+同名スキルが複数見つかった場合は、**project-level が user-level を上書き**するのが自然です。
+
+## Step 2: `SKILL.md` を解析する
+
+各 `SKILL.md` から frontmatter と本文を取り出します。
+
+1. 先頭の `---` と終了側の `---` を探す
+2. その間の YAML を解析する
+3. `name` と `description` を取り出す
+4. 以降を本文として扱う
+
+互換性を重視するなら、多少壊れた YAML でも回復を試みると実運用で助かります。例えばコロンを含む未引用値は、引用符付与などで復旧できます。
+
+## Step 3: 利用可能スキルをモデルへ伝える
+
+モデルに、全文ではなくカタログだけを渡します。
+
+```xml
+<available_skills>
+  <skill>
+    <name>pdf-processing</name>
+    <description>Extract PDF text, fill forms, merge files. Use when handling PDFs.</description>
+    <location>/home/user/.agents/skills/pdf-processing/SKILL.md</location>
+  </skill>
+</available_skills>
+```
+
+`location` はファイル読取型の有効化や相対パス解決に使えます。
+
+モデル向けには、カタログだけでなく短い運用ルールも添えます。
+
+```text
+The following skills provide specialized instructions for specific tasks.
+When a task matches a skill's description, call the activate_skill tool
+with the skill's name to load its full instructions.
+```
+
+## Step 4: スキルを有効化する
+
+有効化方法は主に次の 2 つです。
+
+- **ファイル読取型**: モデルが `SKILL.md` をそのまま読む
+- **専用ツール型**: `activate_skill(name)` のようなツールで本文を返す
+
+専用ツール型の利点:
+
+- frontmatter を残すか除くかを制御できる
+- 構造化タグで包める
+- リソース一覧を一緒に返せる
+- 権限制御やユーザー確認を入れられる
+
+ユーザー明示の `/skill-name` や `$skill-name` をハーネス側で解釈して直接有効化できる設計も有効です。
+
+## Step 5: 会話中のスキル文脈を維持する
+
+- スキル内容はコンテキスト圧縮の対象から外す
+- すでに有効化済みのスキルは重複注入しない
+- 必要ならサブエージェントでスキルを実行する
+
+スキルディレクトリを allowlist 化しておくと、同梱スクリプトや参考資料の読取時に毎回確認ダイアログが出ず、使い勝手が安定します。
+
+## 参照実装
+
+[skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref) は、検証やプロンプト用 XML 生成に使える参考実装です。
+
+```bash
+skills-ref validate <path>
+skills-ref to-prompt <path>...
+```
