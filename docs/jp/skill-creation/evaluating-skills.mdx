@@ -1,0 +1,85 @@
+---
+title: "スキル出力品質の評価"
+sidebarTitle: "スキル評価"
+description: "eval 駆動で Agent Skill の出力品質を評価し、反復改善する方法。"
+---
+
+一度うまく動いただけでは、信頼できるスキルとは言えません。 varied な prompt や edge case でも安定するか、スキルなしより本当に良いかを確認するには、構造化された eval が必要です。
+
+## テストケース設計
+
+各テストケースは次の 3 要素からなります。
+
+- **Prompt**
+- **Expected output**
+- **Input files**（必要なら）
+
+`evals/evals.json` に保存します。
+
+```json
+{
+  "skill_name": "csv-analyzer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a CSV of monthly sales data in data/sales_2025.csv. Can you find the top 3 months by revenue and make a bar chart?",
+      "expected_output": "A bar chart image showing the top 3 months by revenue, with labeled axes and values.",
+      "files": ["evals/files/sales_2025.csv"]
+    }
+  ]
+}
+```
+
+## eval を回す
+
+各テストケースは、少なくとも次の比較を行います。
+
+- **with skill**
+- **without skill** または **旧バージョン**
+
+各 run は新しい文脈で開始してください。
+
+## timing も記録する
+
+品質だけでなく、時間とトークンも比較します。
+
+```json
+{
+  "total_tokens": 84852,
+  "duration_ms": 23332
+}
+```
+
+## assertion を書く
+
+最初の出力を見たあとで、検証可能な assertion を足します。
+
+```json
+{
+  "assertions": [
+    "The output includes a bar chart image file",
+    "The chart shows exactly 3 months",
+    "Both axes are labeled"
+  ]
+}
+```
+
+## grading
+
+各 assertion について PASS / FAIL と証拠を残します。
+
+```json
+{
+  "assertion_results": [
+    {
+      "text": "Both axes are labeled",
+      "passed": false,
+      "evidence": "Y-axis is labeled 'Revenue ($)' but X-axis has no label"
+    }
+  ]
+}
+```
+
+## 集計と改善
+
+`benchmark.json` に pass rate、時間、トークンをまとめます。スキルありでだけ通る assertion が、スキルの価値が出ている部分です。人間レビューと実行トレースも合わせて見て、`SKILL.md` を改善して次の iteration を回します。

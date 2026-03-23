@@ -45,7 +45,20 @@
           "jp/home",
           "jp/what-are-skills",
           "jp/specification",
-          "jp/integrate-skills"
+          {
+            "group": "スキル作成者向け",
+            "pages": [
+              "jp/skill-creation/quickstart",
+              "jp/skill-creation/best-practices",
+              "jp/skill-creation/optimizing-descriptions",
+              "jp/skill-creation/evaluating-skills",
+              "jp/skill-creation/using-scripts"
+            ]
+          },
+          {
+            "group": "クライアント実装者向け",
+            "pages": ["jp/client-implementation/adding-skills-support"]
+          }
         ]
       }
     ]
@@ -66,6 +79,10 @@
     {
       "source": "/integrate-skills",
       "destination": "/client-implementation/adding-skills-support"
+    },
+    {
+      "source": "/jp/integrate-skills",
+      "destination": "/jp/client-implementation/adding-skills-support"
     }
   ]
 }

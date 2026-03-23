@@ -1,0 +1,61 @@
+---
+title: "スキル内で scripts を使う"
+sidebarTitle: "scripts の使い方"
+description: "Agent Skill でコマンド実行や再利用可能スクリプトを扱うための実践ガイド。"
+---
+
+スキルは、単発コマンドの実行指示も、`scripts/` 配下の再利用可能スクリプトも扱えます。
+
+## 単発コマンド
+
+既存ツールで十分なら、`scripts/` を作らず `SKILL.md` に直接書いて構いません。
+
+```bash
+uvx ruff@0.8.0 check .
+npx eslint@9 --fix .
+go run golang.org/x/tools/cmd/goimports@v0.28.0 .
+```
+
+ポイント:
+
+- バージョンを固定する
+- 前提条件を `SKILL.md` や `compatibility` に書く
+- コマンドが複雑化したら `scripts/` に切り出す
+
+## `SKILL.md` から script を参照する
+
+パスは **スキルルートからの相対パス** を使います。
+
+```markdown
+## Available scripts
+
+- `scripts/validate.sh` — validates configuration files
+- `scripts/process.py` — processes input data
+```
+
+## 自己完結スクリプト
+
+再利用するロジックは、依存関係を自己申告するスクリプトとして同梱すると扱いやすくなります。
+
+```python
+# /// script
+# dependencies = [
+#   "beautifulsoup4",
+# ]
+# ///
+
+from bs4 import BeautifulSoup
+print(BeautifulSoup("<p>Hello</p>", "html.parser").select_one("p").get_text())
+```
+
+```bash
+uv run scripts/extract.py
+```
+
+## エージェント向けに script を設計する
+
+- 対話入力を避ける
+- `--help` を整える
+- エラーメッセージを具体的にする
+- JSON / CSV のような構造化出力を優先する
+- 破壊的操作には `--dry-run` や `--confirm` を用意する
